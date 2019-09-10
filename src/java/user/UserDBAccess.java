@@ -11,7 +11,7 @@ public class UserDBAccess {
     
     private Connection con;
     
-    UserDBAccess(){
+    public UserDBAccess(){
         DBConnection connection = new DBConnection();
         this.con = connection.connect();
     }
@@ -27,14 +27,20 @@ public class UserDBAccess {
         }
         return null;
     }
-    Boolean addUser(User user) {
+    public Boolean addUser(User user) {
         try {
+            
+            System.out.println(user.getFname());
             if(this.isExist(user)){
+                System.out.println(" username taken");
                 return false;
             }
             else{
             Statement stm = this.con.createStatement();
-            Boolean rs = stm.execute("INSERT INTO users users VALUES ("+user.getFname()+","+user.getLname()+","+user.getUsername()+","+user.getPassword()+")");
+            String Q = "INSERT INTO users('username', 'fname', 'lname', 'password') VALUES ('"+user.getUsername()+"','"+user.getFname()+"','"+user.getLname()+"','"+user.getPassword()+"')";
+            System.out.println(Q);
+            Boolean rs = stm.execute("INSERT INTO `users` (`username`, `fname`, `lname`, `password`) VALUES ('"+user.getUsername()+"', '"+user.getFname()+"', '"+user.getLname()+"', '"+user.getPassword()+"')");
+            System.out.println(rs);
             return rs;
             }
         } catch (SQLException ex) {
@@ -44,9 +50,18 @@ public class UserDBAccess {
     }
     Boolean isExist(User user) {
         try {
+            
+            System.out.println(user.getFname());
             Statement stm =this.con.createStatement();
-            Boolean rs =stm.execute("SELECT username FROM users WHERE EXISTS (users.username = "+user.getUsername()+")");
-            return rs;
+            String Q = "SELECT username FROM users WHERE username = \""+user.getUsername()+"\"";
+            System.out.println(Q);
+            ResultSet rs =stm.executeQuery(Q);
+            if(rs.next() ){
+                System.out.println("is exist = true ");
+                return true;
+            }
+            System.out.println("is exist = false ");
+            return false;
         } catch (SQLException ex) {
             Logger.getLogger(UserDBAccess.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,6 +71,7 @@ public class UserDBAccess {
         try {
             Statement stm =this.con.createStatement();
             Boolean rs =stm.execute("SELECT username FROM users WHERE EXISTS (users.username = "+username+")");
+            
             return rs;
         } catch (SQLException ex) {
             Logger.getLogger(UserDBAccess.class.getName()).log(Level.SEVERE, null, ex);

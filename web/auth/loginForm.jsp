@@ -88,7 +88,7 @@ input[type=submit]:hover {
 </style>
     </head>
     <body>
-        <form action="auth.Signin" method="POST">
+        <form action="/WebApplication7/Signin" method="POST">
             <div name="form">
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="password" placeholder="Password" required>
