@@ -8,6 +8,14 @@
         <servlet-name>Signin</servlet-name>
         <servlet-class>auth.Signin</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>LoginDirect</servlet-name>
+        <servlet-class>auth.LoginDirect</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RegisterDirect</servlet-name>
+        <servlet-class>auth.RegisterDirect</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Signup</servlet-name>
         <url-pattern>/Signup</url-pattern>
@@ -15,6 +23,14 @@
     <servlet-mapping>
         <servlet-name>Signin</servlet-name>
         <url-pattern>/Signin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LoginDirect</servlet-name>
+        <url-pattern>/LoginDirect</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RegisterDirect</servlet-name>
+        <url-pattern>/RegisterDirect</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

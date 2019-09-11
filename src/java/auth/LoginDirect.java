@@ -10,14 +10,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import user.User;
-import user.UserDBAccess;
 
 /**
  *
  * @author sanjeewa_s
  */
-public class Signin extends HttpServlet {
+public class LoginDirect extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -30,22 +28,8 @@ public class Signin extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");         
-        
-            UserDBAccess udb = new UserDBAccess();
-            User usr = new User();
-            usr.setPassword(request.getParameter("password"));
-            usr.setUsername(request.getParameter("username"));
-            Boolean isAuthenticated = udb.Authenticate(request.getParameter("username"), request.getParameter("password"));
-            if(isAuthenticated){
-                System.out.println("user authenticated");
-                
-                response.sendRedirect("logedIn/welcomePage.jsp"); 
-            }
-            else{
-                System.out.println("user not authenticated");
-                response.sendRedirect("auth/loginForm.jsp?isAutenticated=false"); 
-            }
+        response.setContentType("text/html;charset=UTF-8");
+        response.sendRedirect("auth/loginForm.jsp?isAutenticated=true"); 
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

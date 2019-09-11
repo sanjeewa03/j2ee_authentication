@@ -5,15 +5,15 @@ import db.DBConnection;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import user.User;
+import bcrypt.BCrypt;
         
 public class UserDBAccess {
     
-    private Connection con;
+    private final Connection con;
     
     public UserDBAccess(){
         DBConnection connection = new DBConnection();
-        this.con = connection.connect();
+        this.con = DBConnection.connect();
     }
     
     ResultSet getAllUsers(){
@@ -37,11 +37,18 @@ public class UserDBAccess {
             }
             else{
             Statement stm = this.con.createStatement();
-            String Q = "INSERT INTO users('username', 'fname', 'lname', 'password') VALUES ('"+user.getUsername()+"','"+user.getFname()+"','"+user.getLname()+"','"+user.getPassword()+"')";
+            String password = user.getPassword();
+            String generatedSecuredPasswordHash = BCrypt.hashpw(password, BCrypt.gensalt(12));
+		System.out.println(generatedSecuredPasswordHash);
+                System.out.println(user.getPassword());
+		
+		boolean matched = BCrypt.checkpw(password, generatedSecuredPasswordHash);
+		System.out.println(matched);
+            String Q = "INSERT INTO users('username', 'fname', 'lname', 'password') VALUES ('"+user.getUsername()+"','"+user.getFname()+"','"+user.getLname()+"','"+generatedSecuredPasswordHash+"')";
             System.out.println(Q);
-            Boolean rs = stm.execute("INSERT INTO `users` (`username`, `fname`, `lname`, `password`) VALUES ('"+user.getUsername()+"', '"+user.getFname()+"', '"+user.getLname()+"', '"+user.getPassword()+"')");
+            Boolean rs = stm.execute("INSERT INTO `users` (`username`, `fname`, `lname`, `password`) VALUES ('"+user.getUsername()+"', '"+user.getFname()+"', '"+user.getLname()+"', '"+generatedSecuredPasswordHash+"')");
             System.out.println(rs);
-            return rs;
+            return true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserDBAccess.class.getName()).log(Level.SEVERE, null, ex);
@@ -70,7 +77,7 @@ public class UserDBAccess {
     Boolean isExist(String username) {
         try {
             Statement stm =this.con.createStatement();
-            Boolean rs =stm.execute("SELECT username FROM users WHERE EXISTS (users.username = "+username+")");
+            Boolean rs =stm.execute("SELECT username FROM users WHERE username = \""+username+"\"");
             
             return rs;
         } catch (SQLException ex) {
@@ -81,7 +88,7 @@ public class UserDBAccess {
     ResultSet getUser(String username) {
         try {
             Statement stm =this.con.createStatement();
-            ResultSet rs =stm.executeQuery("SELECT username,password FROM users WHERE users.username = "+username+" LIMIT 1");
+            ResultSet rs =stm.executeQuery("SELECT username,password FROM users WHERE username = \""+username+"\" LIMIT 1");
             return rs;
         } catch (SQLException ex) {
             Logger.getLogger(UserDBAccess.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,8 +99,14 @@ public class UserDBAccess {
         try {
             if(this.isExist(username)){
                 ResultSet rs = this.getUser(username);
-                rs.getString(password);
-                return true;
+                rs.next();
+                String orginal_password = rs.getString("password");
+                String generatedSecuredPasswordHash = BCrypt.hashpw(orginal_password, BCrypt.gensalt(12));
+		System.out.println(generatedSecuredPasswordHash);
+		
+		boolean matched = BCrypt.checkpw(password, orginal_password);
+		System.out.println(matched);
+                return matched;
             }   
         } catch (SQLException ex) {
             Logger.getLogger(UserDBAccess.class.getName()).log(Level.SEVERE, null, ex);

@@ -2,7 +2,6 @@
 package auth;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,21 +16,24 @@ public class Signup extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         System.out.println(request.getParameter("username"));
-        //if(request.getParameter("username")==null/*&&request.getParameter("fname")==null&&request.getParameter("lname")==null&&request.getParameter("password")==null*/){
-          //response.sendRedirect("auth/registerForm.jsp");  
-        //}
-        //else{
+          
+        
             UserDBAccess udb = new UserDBAccess();
             User usr = new User();
-            usr.setFname("sanjeewa");
-            usr.setLname("Senarathne");
-            usr.setPassword("apple");
-            usr.setUsername("nuwa222n2");
+            usr.setFname(request.getParameter("fname"));
+            usr.setLname(request.getParameter("lname"));
+            usr.setPassword(request.getParameter("password"));
+            usr.setUsername(request.getParameter("username"));
             System.out.println(usr.getFname());
-            udb.addUser(usr);
-            
-        //}
-        
+            Boolean added=udb.addUser(usr);
+            System.out.print("added :"+added);
+            if(added){
+                response.sendRedirect("logedIn/welcomePage.jsp");
+            }
+            else{
+                response.sendRedirect("auth/registerForm.jsp?added=false");
+            }
+         
     }
 
    
